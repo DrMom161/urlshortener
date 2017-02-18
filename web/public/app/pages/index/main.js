@@ -9,22 +9,27 @@ define(['jquery'], function ($) {
         /**
          * Subscribe to page events
          */
-        subscribe: function(){
-            $('#jsUrlShotenerForm').submit(main.formUrlShotenerSubmit);
+        subscribe: function () {
+            $('#jsUrlShortenerForm').submit(main.formUrlShortenerSubmit);
         },
         /**
          * Callback for form url shotener submit
          * @param event
          */
-        formUrlShotenerSubmit: function (event) {
+        formUrlShortenerSubmit: function (event) {
             event.preventDefault();
             var $form = $(this);
-            $('#jsSuccessMessage, jsErrorMessage', $form).addClass('hidden');
+            $('#jsSuccessMessage, #jsErrorMessage', $form).addClass('hidden');
             //disable submit button while ajax work
             $form.find('[type=submit]').attr('disabled', true);
+
             $.post('/create_short_url', $form.serialize(), function (response) {
-                var message = 'Your short url: ' + response;
-                $('#jsSuccessMessage', $form).html(message).removeClass('hidden');
+                if (response.hasError === false) {
+                    var message = 'Your short url: ' + location.origin + '/' + response.data.shortUrl;
+                    $('#jsSuccessMessage', $form).html(message).removeClass('hidden');
+                } else {
+                    $('#jsErrorMessage', $form).html(response.errors.join('<br>')).removeClass('hidden');
+                }
             })
                 .fail(function (error) {
                     $('#jsErrorMessage', $form).html(error.responseText).removeClass('hidden');

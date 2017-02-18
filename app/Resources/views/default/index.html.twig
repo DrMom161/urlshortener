@@ -2,22 +2,25 @@
 
 {% block body %}
     <div class="container">
-        <form id="jsUrlShotenerForm">
+        <form id="jsUrlShortenerForm">
+
             <div class="form-group">
                 <label for="longUrl">Long url*</label>
                 <input type="text" class="form-control" id="longUrl" name="longUrl" placeholder="http://example.com"
-                       required>
 
             </div>
+
             <div class="form-group">
                 <label for="shortUrl">Desired short URL</label>
                 <input type="text" class="form-control" id="shortUrl" name="shortUrl" placeholder="myshorturl">
                 <small class="form-text text-muted">You can specify the desired short URL</small>
             </div>
+
             <div class="form-group">
                 <div class="alert alert-success hidden" id="jsSuccessMessage" role="alert"></div>
                 <div class="alert alert-danger hidden" id="jsErrorMessage" role="alert"></div>
             </div>
+
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </div>
