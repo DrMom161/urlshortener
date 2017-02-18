@@ -3,11 +3,13 @@
     <head>
         <meta charset="UTF-8" />
         <title>{% block title %}Welcome!{% endblock %}</title>
-        {% block stylesheets %}{% endblock %}
-        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+        {% block stylesheets %}
+            <link href="/public/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+        {% endblock %}
     </head>
     <body>
         {% block body %}{% endblock %}
         {% block javascripts %}{% endblock %}
+        <script data-main="/public/app/main" src="/public/bower_components/requirejs/require.js"></script>
     </body>
 </html>
