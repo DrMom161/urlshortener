@@ -23,3 +23,6 @@ Fill form fields:
   -desired short url (optional)
 Submit form.
 Copy url from from success message and share it to friends.
+
+##Demo##
+http://drmom161.ru/
