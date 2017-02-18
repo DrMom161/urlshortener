@@ -2,29 +2,50 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Redirecting;
 use AppBundle\Repository\RedirectingRepository;
 use AppBundle\Service\ResponseBuilder;
 use AppBundle\Service\UrlShortener;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class DefaultController extends Controller
 {
     /**
-     * @Route("/", name="homepage")
+     * Index page or redirecting
+     * @Route("/{shortUrl}", name="homepage", defaults={"shortUrl" = ""})
+     * @param string $shortUrl
+     * @Method({"GET"})
+     * @return Response
      */
-    public function indexAction()
+    public function indexAction($shortUrl)
     {
+        //try to redirect
+        if($shortUrl){
+            /**
+             * @var RedirectingRepository $redirectingRepository
+             * @var Redirecting $redirecting
+             */
+            $redirectingRepository = $this->getDoctrine()->getRepository('AppBundle:Redirecting');
+            $redirecting = $redirectingRepository->findOneByShortUrl($shortUrl);
+            if($redirecting){
+                $redirectingRepository->incUsageCount($redirecting);
+                return $this->redirect($redirecting->getLongUrl());
+            }
+        }
+        //default page
         return $this->render('default/index.html.twig');
     }
-
     /**
      * Create short url from requested long url
      * @param Request $request
      * @return JsonResponse
      * @Route("/create_short_url")
+     * @Method({"POST"})
      */
     public function createShortUrlAction(Request $request)
     {

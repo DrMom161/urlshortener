@@ -40,4 +40,15 @@ class RedirectingRepository extends \Doctrine\ORM\EntityRepository
         $em->persist($redirecting);
         $em->flush();
     }
+
+    /**
+     * Increment usage counter of url redirecting
+     * @param Redirecting $redirecting
+     */
+    public function incUsageCount(Redirecting $redirecting){
+        $redirecting->setUsageCount($redirecting->getUsageCount() + 1);
+        $em = $this->getEntityManager();
+        $em->persist($redirecting);
+        $em->flush();
+    }
 }
