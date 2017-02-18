@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(name="redirecting")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\RedirectingRepository")
+ * @ORM\HasLifecycleCallbacks
  */
 class Redirecting
 {
@@ -42,7 +43,21 @@ class Redirecting
      */
     private $usageCount = 0;
 
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="created_at", type="datetime")
+     */
+    private $createdAt;
 
+    /**
+     * Add created at date
+     * @ORM\PrePersist
+     */
+    public function onPrePersistSetRegistrationDate()
+    {
+        $this->createdAt = new \DateTime();
+    }
     /**
      * Get id
      *
@@ -124,5 +139,28 @@ class Redirecting
     {
         return $this->usageCount;
     }
-}
 
+    /**
+     * Set createdAt
+     *
+     * @param \DateTime $createdAt
+     *
+     * @return Redirecting
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * Get createdAt
+     *
+     * @return \DateTime
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+}
