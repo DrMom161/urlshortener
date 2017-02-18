@@ -47,6 +47,13 @@ class ResponseBuilder
     }
 
     /**
+     * Get errors list
+     * @return array
+     */
+    public static function getErrors(){
+        return self::$errors;
+    }
+    /**
      * Generate response in specific format
      * @return array (
      *                  hasError boolean - errors existence

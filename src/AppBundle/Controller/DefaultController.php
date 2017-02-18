@@ -6,6 +6,7 @@ use AppBundle\Entity\Redirecting;
 use AppBundle\Repository\RedirectingRepository;
 use AppBundle\Service\ResponseBuilder;
 use AppBundle\Service\UrlShortener;
+use AppBundle\Service\UrlValidator;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -25,21 +26,27 @@ class DefaultController extends Controller
     public function indexAction($shortUrl)
     {
         //try to redirect
-        if($shortUrl){
+        if ($shortUrl) {
             /**
              * @var RedirectingRepository $redirectingRepository
              * @var Redirecting $redirecting
              */
             $redirectingRepository = $this->getDoctrine()->getRepository('AppBundle:Redirecting');
             $redirecting = $redirectingRepository->findOneByShortUrl($shortUrl);
-            if($redirecting){
+            if ($redirecting) {
+
+                $logger = $this->get('logger');
+                $logger->info('Redirected programmatically from ' . $redirecting->getShortUrl() . ' to ' . $redirecting->getLongUrl());
+
                 $redirectingRepository->incUsageCount($redirecting);
+
                 return $this->redirect($redirecting->getLongUrl());
             }
         }
         //default page
         return $this->render('default/index.html.twig');
     }
+
     /**
      * Create short url from requested long url
      * @param Request $request
@@ -54,12 +61,17 @@ class DefaultController extends Controller
          */
         $redirectingRepository = $this->getDoctrine()->getRepository('AppBundle:Redirecting');
 
-        $longUrl = $request->get('longUrl');
-        $shortUrl = $this->getShortUrl($request, $redirectingRepository);
+        $longUrl = $this->getAndValidateLongurl($request);
+        $shortUrl = $this->getAndValidateShortUrl($request, $redirectingRepository);
 
-        if(!ResponseBuilder::hasErrors()){
+        $logger = $this->get('logger');
+
+        if (!ResponseBuilder::hasErrors()) {
             $redirectingRepository->saveUrlPair($longUrl, $shortUrl);
             ResponseBuilder::addData('shortUrl', $shortUrl);
+            $logger->info('Can not create short url because: ' . implode(', ', ResponseBuilder::getErrors()));
+        } else {
+            $logger->error('Can not create short url because: ' . implode(', ', ResponseBuilder::getErrors()) . '. Data: short url - ' . $shortUrl . ', long url - ' . $longUrl);
         }
 
         $response = new JsonResponse();
@@ -68,18 +80,33 @@ class DefaultController extends Controller
     }
 
     /**
+     * Get from request long url and validate it
+     * @param $request
+     */
+    private function getAndValidateLongurl($request)
+    {
+        $longUrl = $request->get('longUrl');
+        if (!UrlValidator::isValidUrl($longUrl)) {
+            ResponseBuilder::addError('Your url is not valid or unavailable');
+        }
+        return $longUrl;
+    }
+
+    /**
+     * Get from request or create new short url and validate it
      * @param Request $request
      * @param RedirectingRepository $redirectingRepository
      * @return string
      */
-    private function getShortUrl(Request $request, RedirectingRepository $redirectingRepository){
+    private function getAndValidateShortUrl(Request $request, RedirectingRepository $redirectingRepository)
+    {
         $shortUrl = $request->get('shortUrl');
         if ($shortUrl) {
             //desired short url need to check for uniqueness
-            if(!$redirectingRepository->isUniqueShortUrl($shortUrl)){
+            if (!$redirectingRepository->isUniqueShortUrl($shortUrl)) {
                 ResponseBuilder::addError('This URL is already in use');
             }
-        }else{
+        } else {
             /**
              * @var UrlShortener $urlShortenerService
              */
