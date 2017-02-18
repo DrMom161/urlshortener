@@ -1,0 +1,23 @@
+{
+  "name": "UrlShotener",
+  "homepage": "https://github.com/DrMom161/urlshortener",
+  "authors": [
+    "alexey <dr.mom161@gmail.com>"
+  ],
+  "description": "The test project that realizes functionality of the substitution of long URLs to short",
+  "main": "",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "jquery": "^3.1.1",
+    "requirejs": "^2.3.2"
+  }
+}
