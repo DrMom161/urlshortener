@@ -1,13 +1,8 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: alexey
- * Date: 18.02.17
- * Time: 13:31
- */
 
 namespace AppBundle\Service;
 
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ResponseBuilder
 {
@@ -15,18 +10,20 @@ class ResponseBuilder
      * List of errors
      * @var array
      */
-    private static $errors = array();
+    private $errors = array();
     /**
      * Additional data of response
      * @var array
      */
-    private static $data = array();
+    private $data = array();
+
     /**
      * Add error to list
      * @param string $errorText
      */
-    public static function addError($errorText){
-        self::$errors[] = $errorText;
+    public function addError($errorText)
+    {
+        $this->errors[] = (string)$errorText;
     }
 
     /**
@@ -34,25 +31,29 @@ class ResponseBuilder
      * @param string $key
      * @param string $value
      */
-    public static function addData($key, $value){
-        self::$data[$key] = $value;
+    public function addData($key, $value)
+    {
+        $this->data[$key] = $value;
     }
 
     /**
      * Get info about errors existence
      * @return bool
      */
-    public static function hasErrors(){
-        return (bool)self::$errors;
+    public function hasErrors()
+    {
+        return (bool)$this->errors;
     }
 
     /**
      * Get errors list
      * @return array
      */
-    public static function getErrors(){
-        return self::$errors;
+    public function getErrors()
+    {
+        return $this->errors;
     }
+
     /**
      * Generate response in specific format
      * @return array (
@@ -60,17 +61,28 @@ class ResponseBuilder
      *                  [errors array - list of errors messages]
      *              )
      */
-    public static function getResponse()
+    public function getResponse()
     {
-        $hasError = self::hasErrors();
+        $hasError = $this->hasErrors();
         $response = array('hasError' => $hasError);
 
-        if($hasError){
-            $response['errors'] = self::$errors;
-        }else{
-            $response['data'] = self::$data;
+        if ($hasError) {
+            $response['errors'] = $this->errors;
+        } else {
+            $response['data'] = $this->data;
         }
 
+        return $response;
+    }
+
+    /**
+     * Generate json response from own data
+     * @return JsonResponse
+     */
+    public function getJsonResponse()
+    {
+        $response = new JsonResponse();
+        $response->setData($this->getResponse());
         return $response;
     }
 }

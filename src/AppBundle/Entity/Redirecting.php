@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Redirecting
@@ -25,13 +26,24 @@ class Redirecting
     /**
      * @var string
      *
+     * @Assert\NotBlank()
+     * @Assert\Length(
+     *      max = 1000,
+     *      maxMessage = "Your long url cannot be longer than {{ limit }} characters"
+     * )
+     * @Assert\Url()
+     *
      * @ORM\Column(name="longUrl", type="string", length=1000)
      */
     private $longUrl;
 
     /**
      * @var string
-     *
+     * @Assert\NotBlank()
+     * @Assert\Length(
+     *      max = 10,
+     *      maxMessage = "Your short url cannot be longer than {{ limit }} characters"
+     * )
      * @ORM\Column(name="shortUrl", type="string", length=10, unique=true)
      */
     private $shortUrl;
@@ -58,6 +70,7 @@ class Redirecting
     {
         $this->createdAt = new \DateTime();
     }
+
     /**
      * Get id
      *

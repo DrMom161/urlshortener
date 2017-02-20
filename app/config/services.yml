@@ -7,7 +7,16 @@ services:
         arguments:
             - AppBundle\Entity\Redirecting
 
+    app.response_builder:
+        class:        AppBundle\Service\ResponseBuilder
+
     app.url_shortener:
         class:        AppBundle\Service\UrlShortener
         arguments:
           - @redirecting_repository
+          - @app.response_builder
+
+    app.entity_validator:
+        class:        AppBundle\Service\EntityValidator
+        arguments:
+          - @validator

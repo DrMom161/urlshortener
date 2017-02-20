@@ -3,6 +3,8 @@
 namespace AppBundle\Repository;
 
 use AppBundle\Entity\Redirecting;
+use AppBundle\Service\ResponseBuilder;
+use Doctrine\ORM\Mapping;
 
 /**
  * RedirectingRepository
@@ -12,6 +14,7 @@ use AppBundle\Entity\Redirecting;
  */
 class RedirectingRepository extends \Doctrine\ORM\EntityRepository
 {
+
     /**
      * Check for uniqueness short url value
      * @param string $url
@@ -20,22 +23,18 @@ class RedirectingRepository extends \Doctrine\ORM\EntityRepository
     public function isUniqueShortUrl($url)
     {
         $matches = $this->getEntityManager()
-                        ->getRepository('AppBundle:Redirecting')
-                        ->findOneByShortUrl($url);
+            ->getRepository('AppBundle:Redirecting')
+            ->findOneByShortUrl($url);
 
         return !$matches;
     }
 
     /**
-     * Save urls pair for redirecting
-     * @param string $longUrl
-     * @param string $shortUrl
+     * Save redirecting entity
+     * @param Redirecting $redirecting
      */
-    public function saveUrlPair($longUrl, $shortUrl){
-        $redirecting = new Redirecting();
-        $redirecting->setLongUrl($longUrl);
-        $redirecting->setShortUrl($shortUrl);
-
+    public function save($redirecting)
+    {
         $em = $this->getEntityManager();
         $em->persist($redirecting);
         $em->flush();
@@ -45,10 +44,12 @@ class RedirectingRepository extends \Doctrine\ORM\EntityRepository
      * Increment usage counter of url redirecting
      * @param Redirecting $redirecting
      */
-    public function incUsageCount(Redirecting $redirecting){
+    public function incUsageCount(Redirecting $redirecting)
+    {
         $redirecting->setUsageCount($redirecting->getUsageCount() + 1);
         $em = $this->getEntityManager();
         $em->persist($redirecting);
         $em->flush();
     }
+
 }
