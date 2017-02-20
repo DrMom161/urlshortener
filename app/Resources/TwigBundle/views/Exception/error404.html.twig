@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title>Page is not found: {{ status_text }}</title>
+    <link href="/public/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="container">
+    <h1 class="text-center">Page not found</h1>
+    <div class="alert alert-danger" role="alert"><h3>{{ exception.message }}</h3></div>
+    <div class="text-center">
+        <a href="/" class="btn btn-primary btn-lg">Home page</a>
+    </div>
+</div>
+</body>
+</html>
