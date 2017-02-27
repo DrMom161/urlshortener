@@ -45,6 +45,12 @@ class UrlShortener
      */
     public function getRedirectingFromRequest(Request $request)
     {
+        //prepare request data
+        if(!$request->get('longUrl')){
+            $data = json_decode($request->getContent(), true);
+            $request->request->replace($data);
+        }
+
         $redirecting = new Redirecting();
         $redirecting->setShortUrl($this->getAndValidateShortUrl($request));
         $redirecting->setLongUrl($this->getAndValidateLongurl($request));

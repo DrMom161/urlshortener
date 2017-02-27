@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8"/>
+        <title>Url Shortener</title>
+        <link href="/public/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.2/angular.min.js"></script>
+    </head>
+    <body ng-app="urlShortener">
+        <div class="container">
+            <form ng-submit="submitForm()" ng-controller="UrlShortenerController">
+
+                <div class="form-group">
+                    <label for="longUrl">Long url*</label>
+                    <input type="text" class="form-control" ng-model="longUrl" id="longUrl" placeholder="http://example.com"
+                           maxlength="1000" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="shortUrl">Desired short URL</label>
+                    <input type="text" class="form-control" ng-model="shortUrl" id="shortUrl" placeholder="myshorturl"
+                           maxlength="10">
+                    <small class="form-text text-muted">You can specify the desired short URL</small>
+                </div>
+
+                <div class="form-group">
+                    <div class="alert alert-success" id="jsSuccessMessage" role="alert" ng-show="successMessage">Your short url:
+                        {{successMessage}}
+                    </div>
+                    <div class="alert alert-danger" id="jsErrorMessage" role="alert" ng-show="errorMessage">{{errorMessage}}
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+        <script type="text/javascript" src="/angular/js/index.js"></script>
+    </body>
+</html>
